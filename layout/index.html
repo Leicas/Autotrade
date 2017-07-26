@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+	{% for key, value in graphs.items() %}
+    <h1>{{key}}</h1>
+    Valeur = {{valeurs[key]}}
+    <div class="coefs">
+     <table>
+    <tr>
+    {% for since, coef in coefs[key].items() %}
+    {% if loop.index0 is divisibleby 3 %}</tr><tr>{% endif %}
+
+    <td>    {{since|human}} : {{"{:.6f} %/heure".format(coef)}} </td>
+    
+    {% endfor %}
+    </table>
+    </div>
+    <div class="graphs">
+    	{% for graph in value %}
+      <img src="data:image/png;base64,{{graph}}" />
+    	{% endfor %}
+    </div>
+    {% endfor %}
+
+  
+   {% endblock %}
