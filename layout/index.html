@@ -1,26 +1,121 @@
 {% extends "layout.html" %}
 {% block title %}Index{% endblock %}
 {% block content %}
-	{% for key, value in graphs.items() %}
-    <h1>{{key}}</h1>
-    Valeur = {{valeurs[key]}}
-    <div class="coefs">
-     <table>
-    <tr>
-    {% for since, coef in coefs[key].items() %}
-    {% if loop.index0 is divisibleby 3 %}</tr><tr>{% endif %}
-
-    <td>    {{since|human}} : {{"{:.6f} %/heure".format(coef)}} </td>
-    
-    {% endfor %}
-    </table>
+    <nav id="navigation" class="sticky-top navbar navbar-expand-lg navbar-dark bg-dark">
+      
+ <a class="navbar-brand" href="#">Autotrade</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+ <ul class="nav nav-pills">
+  <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Infos</a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+      <a class="nav-link dropdown-item" href="#balance">Balance</a>
+      <a class="nav-link dropdown-item" href="#config">Configuration</a>
     </div>
-    <div class="graphs">
-    	{% for graph in value %}
-      <img src="data:image/png;base64,{{graph}}" />
-    	{% endfor %}
-    </div>
-    {% endfor %}
+  </li>
+             <li class="nav-item dropdown">
+               <a class="nav-link" href="#operations">Opérations</a>
+             </li>
+              <li class="nav-item dropdown">
+               <a class="nav-link" href="#evolution">Évolutions</a>
+             </li>
 
+           </ul></div>
+        </nav>
+
+        <main id="content"  role="main" >
+            <div class="card">
+  <h1 class="card-header" id="infos" data-toggle="collapse" data-target="#infobody" aria-expanded="true" aria-controls="infobody">Infos</h1>
+  <div id="infobody" class="card-body collapse show">
+    <h2 class="card-title" id="balance">Balance</h2>
+    <div class="row">
+    <div class="col">
+     <table class="table table-sm table-bordered">
+         {% for column in assets%}
+         <tr>
+            <td>{{column}}</td> <td>{{assets.iloc[0][column]}}</td>
+          </tr>
+        {%endfor%} </table>
+
+        <h2 id="config">Configuration</h2>
+    <table class="table table-sm table-bordered">
+        <tr>
+    {% for key in infos %}
+      <th>{{key}}</th>
+    {%endfor%}
+    </tr><tr>
+    {% for key in infos %}
+      <td>{{infos[key]}}</td>
+    {%endfor%}</tr></table>
+      </div>
+      <div class="col-9">
+        {% for graph in balanceeq %}
+    <img src="data:image/png;base64,{{graph}}" />
+    {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+    <div class="card">
+      <h1 class="card-header" id="operations" data-toggle="collapse" data-target="#opbody" aria-expanded="true" aria-controls="opbody">Opérations</h1>
+        <div id="opbody" class="card-body collapse show">
+          <h2>Opérations</h2>
+          <table class="table table-sm table-striped table-hover">
+              <tr>
+              <th>Id</th><th>Date</th><th>Cours</th><th>Prix</th><th>Gain</th>
+          </tr>
+          {% for order in orders %}
+            <tr>
+            <td>{{order}}</td>
+            <td>{{orders[order]['opentm']|datetimeformat}}</td>
+            <td>{{orders[order]['price']}}</td>
+            <td>{{orders[order]['cout']}}</td>
+            <td>{{orders[order]['value']}}</td>
+            </tr>
+          {% endfor %}
+</table>
+        </div>
+    </div>
+     <div class="card">
+  <h1 class="card-header" id="evolution" data-toggle="collapse" data-target="#evobody" aria-expanded="true" aria-controls="evobody">Evolutions</h1>
+  <div id="evobody" class="card-body collapse show">
+    {% for key, value in graphs.items() %}
+      <h2>{{key}} <span class="badge badge-primary">{{valeurs[key]}}€</span></h2>
+     <div class="row">
+    <div class="col">
+      <div class="coefs">
+        <table class="table table-sm table-striped table-hover">
+          <tr>
+            <th>Temps</th><th>Tendance</th>
+          </tr>
+        {% for since, coef in coefs[key].items() %}
+        <tr>
+        <td>{{since|human}}</td><td>{{"{:.6f} %/heure".format(coef)}}</td>
+        </tr>
+        {% endfor %}
+        </table>
+        </div>
+   
+      </div>
+     <div class="col-9">
+     <div class="graphs">
+          {% for graph in value %}
+          <img src="data:image/png;base64,{{graph}}" />
+          {% endfor %}
+        </div>
+     
+    </div>
+    </div>
+      
+      
+    {% endfor %}
+  </div>
+</div>
+	
+</main>
   
    {% endblock %}
